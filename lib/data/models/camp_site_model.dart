@@ -1,22 +1,27 @@
-import '../../domain/entities/camp_site.dart';
+import 'package:equatable/equatable.dart';
+import 'package:campsite/domain/entities/camp_site.dart';
 
-class GeoLocationModel {
+class GeoLocationModel extends Equatable{
   final double lat;
   final double long;
-  GeoLocationModel({required this.lat, required this.long});
+  const GeoLocationModel({required this.lat, required this.long});
 
   factory GeoLocationModel.fromJson(Map<String, dynamic> json) {
     double lat = json['lat'];
     double long = json['long'];
-    lat = (lat % 180) - 90;
-    long = (long % 360) - 180;
     return GeoLocationModel(lat: lat, long: long);
   }
 
   GeoLocation toEntity() => GeoLocation(lat: lat, long: long);
+
+  @override
+  List<Object?> get props => [
+    lat,
+    long,
+  ];
 }
 
-class CampSiteModel {
+class CampSiteModel extends Equatable {
   final String id;
   final String label;
   final String photo;
@@ -28,7 +33,7 @@ class CampSiteModel {
   final List<String> suitableFor;
   final DateTime createdAt;
 
-  CampSiteModel({
+  const CampSiteModel({
     required this.id,
     required this.label,
     required this.photo,
@@ -52,7 +57,7 @@ class CampSiteModel {
       hostLanguages: List<String>.from(json['hostLanguages']),
       pricePerNight: json['pricePerNight'].toDouble(),
       suitableFor: List<String>.from(json['suitableFor']),
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt']).toUtc(),
     );
   }
 
@@ -68,4 +73,18 @@ class CampSiteModel {
     suitableFor: suitableFor,
     createdAt: createdAt,
   );
+
+  @override
+  List<Object?> get props => [
+    id,
+    label,
+    photo,
+    geoLocation,
+    isCloseToWater,
+    isCampFireAllowed,
+    hostLanguages,
+    pricePerNight,
+    suitableFor,
+    createdAt,
+  ];
 }

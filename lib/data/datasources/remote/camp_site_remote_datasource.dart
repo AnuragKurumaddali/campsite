@@ -1,6 +1,6 @@
+import 'package:campsite/data/models/camp_site_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../models/camp_site_model.dart';
 
 class CampSiteRemoteDataSource {
   final String apiUrl = 'https://62ed0389a785760e67622eb2.mockapi.io/spots/v1/campsites';
