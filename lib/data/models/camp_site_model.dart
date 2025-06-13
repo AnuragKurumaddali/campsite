@@ -47,10 +47,14 @@ class CampSiteModel extends Equatable {
   });
 
   factory CampSiteModel.fromJson(Map<String, dynamic> json) {
+    String photo = json['photo'] as String;
+    if (photo.startsWith('http://')) {
+      photo = photo.replaceFirst('http://', 'https://');
+    }
     return CampSiteModel(
       id: json['id'],
       label: json['label'],
-      photo: json['photo'],
+      photo: photo,
       geoLocation: GeoLocationModel.fromJson(json['geoLocation']),
       isCloseToWater: json['isCloseToWater'],
       isCampFireAllowed: json['isCampFireAllowed'],
