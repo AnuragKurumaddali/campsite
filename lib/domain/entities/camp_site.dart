@@ -2,6 +2,17 @@ class GeoLocation {
   final double lat;
   final double long;
   GeoLocation({required this.lat, required this.long});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is GeoLocation &&
+              runtimeType == other.runtimeType &&
+              lat == other.lat &&
+              long == other.long;
+
+  @override
+  int get hashCode => Object.hash(lat, long);
 }
 
 class CampSite {
@@ -28,4 +39,34 @@ class CampSite {
     required this.suitableFor,
     required this.createdAt,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is CampSite &&
+              runtimeType == other.runtimeType &&
+              id == other.id &&
+              label == other.label &&
+              photo == other.photo &&
+              geoLocation == other.geoLocation &&
+              isCloseToWater == other.isCloseToWater &&
+              isCampFireAllowed == other.isCampFireAllowed &&
+              hostLanguages == other.hostLanguages &&
+              pricePerNight == other.pricePerNight &&
+              suitableFor == other.suitableFor &&
+              createdAt == other.createdAt;
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    label,
+    photo,
+    geoLocation,
+    isCloseToWater,
+    isCampFireAllowed,
+    hostLanguages,
+    pricePerNight,
+    suitableFor,
+    createdAt,
+  );
 }

@@ -1,8 +1,8 @@
+import 'package:campsite/data/datasources/remote/camp_site_remote_datasource.dart';
+import 'package:campsite/data/repositories/camp_site_repository_impl.dart';
+import 'package:campsite/domain/repositories/camp_site_repository.dart';
+import 'package:campsite/domain/usecases/get_camp_sites.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/datasources/remote/camp_site_remote_datasource.dart';
-import '../../data/repositories/camp_site_repository_impl.dart';
-import '../../domain/repositories/camp_site_repository.dart';
-import '../../domain/usecases/get_camp_sites.dart';
 
 final campSiteRemoteDataSourceProvider = Provider<CampSiteRemoteDataSource>(
       (ref) => CampSiteRemoteDataSource(),
