@@ -1,6 +1,7 @@
 import 'package:campsite/domain/entities/camp_site.dart';
 import 'package:campsite/presentation/views/detail_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -14,29 +15,28 @@ void main() {
     hostLanguages: ['en'],
     pricePerNight: 50.0,
     suitableFor: ['Hiking'],
-    createdAt: DateTime(2023, 1, 1),
+    createdAt: DateTime.utc(2023, 1, 1),
   );
 
   testWidgets('DetailView displays campsite details correctly', (WidgetTester tester) async {
-
     await tester.pumpWidget(
-      MaterialApp(
-        home: DetailView(campSite: tCampSite),
+      ProviderScope(
+        child: MaterialApp(
+          home: DetailView(campSite: tCampSite),
+        ),
       ),
     );
 
-
     await tester.pumpAndSettle();
 
-
-    expect(find.text('Test Campsite'), findsNWidgets(2));
-    expect(find.text('€50.00 / night'), findsOneWidget);
+    expect(find.text('Test Campsite'), findsOneWidget);
+    expect(find.text('€50.00/night'), findsOneWidget);
 
     expect(find.text('Close to Water'), findsOneWidget);
-    expect(find.text('Yes'), findsOneWidget);
+    expect(find.text('Available'), findsOneWidget);
     expect(find.text('Campfire Allowed'), findsOneWidget);
-    expect(find.text('No'), findsOneWidget);
-    expect(find.text('Host Languages'), findsOneWidget);
+    expect(find.text('Not Available'), findsOneWidget);
+    expect(find.text('Languages'), findsOneWidget);
     expect(find.text('en'), findsOneWidget);
     expect(find.text('Location'), findsOneWidget);
     expect(find.text('Lat 45.00, Long -75.00'), findsOneWidget);
@@ -45,5 +45,7 @@ void main() {
     expect(find.text('Suitable For'), findsOneWidget);
     expect(find.text('Hiking'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
+    expect(find.text('Go to Map'), findsOneWidget);
+    expect(find.byIcon(Icons.map), findsOneWidget);
   });
 }

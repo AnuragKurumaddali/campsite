@@ -77,10 +77,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        width: 60,
-        height: 60,
-        margin: const EdgeInsets.only(right: 8),
+        duration: const Duration(milliseconds: 300),
+        width: 80,
+        height: 80,
+        margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: selected
@@ -90,12 +90,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
             end: Alignment.bottomRight,
           )
               : null,
-          color: selected ? null : theme.colorScheme.surfaceContainerHighest,
+          color: selected ? null : theme.colorScheme.surface,
+          border: Border.all(
+            color: selected ? theme.colorScheme.primary : Colors.grey.shade300,
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(selected ? 0.2 : 0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -104,16 +108,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
           children: [
             Icon(
               icon,
-              size: 20,
-              color: selected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+              size: 24,
+              color: selected ? Colors.white : theme.colorScheme.onSurface,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: selected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: selected ? Colors.white : theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -129,43 +133,48 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     final campSitesAsync = ref.watch(campSitesProvider);
     final hasActiveFilters = _hasActiveFilters();
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        titleSpacing: 0,
+        backgroundColor: theme.colorScheme.primary,
         title: _isSearching
             ? TextField(
           controller: _searchController,
           autofocus: true,
+          style: const TextStyle(color: Colors.white),
           onChanged: (query) {
             ref.read(searchTextProvider.notifier).state = query;
           },
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Search campsites...',
+            hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
             border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16),
+            filled: true,
+            fillColor: theme.colorScheme.primary.withOpacity(0.2),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         )
-            : Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Campsite List',
-            style: Theme.of(context).textTheme.titleLarge,
+            : const Text(
+          'Discover Campsites',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
         actions: [
           IconButton(
             icon: Icon(
               Icons.filter_list,
-              color: hasActiveFilters ? Theme.of(context).colorScheme.primary : null,
+              color: hasActiveFilters ? Colors.amber : Colors.white,
             ),
             tooltip: _isFiltering ? 'Hide filters' : 'Show filters',
             onPressed: _toggleFilters,
           ),
           IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.white),
             tooltip: _isSearching ? 'Close search' : 'Search',
             onPressed: _toggleSearch,
           ),
@@ -177,7 +186,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             AnimatedCrossFade(
               firstChild: Column(
                 children: [
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
@@ -190,7 +199,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                               label: 'Close to Water',
                               selected: ref.watch(closeToWaterProvider),
                               icon: Icons.water,
-                              gradientColors: [Colors.blue.shade300, Colors.blue.shade600],
+                              gradientColors: [Colors.blue.shade400, Colors.blue.shade700],
                               onTap: () => ref.read(closeToWaterProvider.notifier).state =
                               !ref.watch(closeToWaterProvider),
                             ),
@@ -198,8 +207,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                               context: context,
                               label: 'Campfire',
                               selected: ref.watch(campFireAllowedProvider),
-                              icon: Icons.local_fire_department_outlined,
-                              gradientColors: [Colors.orange.shade300, Colors.red.shade600],
+                              icon: Icons.local_fire_department,
+                              gradientColors: [Colors.orange.shade400, Colors.red.shade700],
                               onTap: () => ref.read(campFireAllowedProvider.notifier).state =
                               !ref.watch(campFireAllowedProvider),
                             ),
@@ -212,16 +221,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: FiltersRow(ref: ref),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                 ],
               ),
               secondChild: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -233,7 +242,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 ),
               ),
               crossFadeState: _isFiltering ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 400),
+              alignment: Alignment.topCenter,
             ),
             Expanded(
               child: campSitesAsync.when(
@@ -243,18 +253,25 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     return Center(
                       child: Text(
                         'No campsites found',
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w500,
+                        ) ?? const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     );
                   }
                   return _isGridView
                       ? GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 0.60,
+                      childAspectRatio: 0.75,
                     ),
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
@@ -263,7 +280,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     },
                   )
                       : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
                       final campSite = filtered[index];
@@ -276,7 +293,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   child: Text(
                     'Oops! Something went wrong:\n$error',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.error,
+                      fontWeight: FontWeight.w500,
+                    ) ?? const TextStyle(
+                      fontSize: 16,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -306,14 +330,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
           _isWithinRadius(
             site.geoLocation.lat,
             site.geoLocation.long,
-            locationProximity['lat']!,
-            locationProximity['long']!,
-            locationProximity['radius']!,
+            locationProximity['lat'] ?? 0.0,
+            locationProximity['long'] ?? 0.0,
+            locationProximity['radius'] ?? 0.0,
           );
       final matchesLanguages = selectedLanguages.isEmpty ||
-          selectedLanguages.every((lang) => site.hostLanguages.contains(lang));
+          selectedLanguages.every((lang) => (site.hostLanguages).contains(lang));
       final matchesSuitableFor = selectedSuitableFor.isEmpty ||
-          selectedSuitableFor.every((item) => site.suitableFor.contains(item));
+          selectedSuitableFor.every((item) => (site.suitableFor).contains(item));
       final matchesPriceLevel = selectedPriceLevels.isEmpty ||
           selectedPriceLevels.any((level) {
             if (level == 'budget') return site.pricePerNight <= 5000;

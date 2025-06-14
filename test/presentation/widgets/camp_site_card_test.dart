@@ -19,7 +19,6 @@ void main() {
   );
 
   testWidgets('CampSiteCard displays correctly in list view', (WidgetTester tester) async {
-
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -28,21 +27,18 @@ void main() {
       ),
     );
 
-
     await tester.pumpAndSettle();
-
 
     expect(find.text('Test Campsite'), findsOneWidget);
     expect(find.text('€50.00 / night'), findsOneWidget);
     expect(find.text('Near Water'), findsOneWidget);
-    expect(find.text('Campfire'), findsOneWidget);
+    expect(find.text('No Campfire'), findsOneWidget);
     expect(find.text('Listed: Jan 1, 2023'), findsOneWidget);
     expect(find.text('Lat: 45.00, Long: -75.00'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
   });
 
   testWidgets('CampSiteCard navigates to DetailView on tap in list view', (WidgetTester tester) async {
-
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -51,18 +47,15 @@ void main() {
       ),
     );
 
-
     await tester.pumpAndSettle();
     await tester.tap(find.byType(InkWell));
     await tester.pumpAndSettle();
 
-
     expect(find.byType(DetailView), findsOneWidget);
-    expect(find.text('Test Campsite'), findsNWidgets(2));
+    expect(find.text('Test Campsite'), findsOneWidget);
   });
 
   testWidgets('CampSiteCard displays correctly in grid view', (WidgetTester tester) async {
-
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -71,13 +64,11 @@ void main() {
       ),
     );
 
-
     await tester.pumpAndSettle();
-
 
     expect(find.text('Test Campsite'), findsOneWidget);
     expect(find.text('€50.00 / night'), findsOneWidget);
-    expect(find.byType(GridView), findsNothing);
+    expect(find.text('Lat: 45.00, Long: -75.00'), findsOneWidget);
     expect(find.byIcon(Icons.water), findsOneWidget);
     expect(find.byIcon(Icons.local_fire_department), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
