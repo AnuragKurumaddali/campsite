@@ -25,30 +25,38 @@ lib/
 │   └── utils/
 │       └── location_utils.dart
 ├── data/
-│   ├── providers/
-│   │   ├── camp_site_provider.dart
-│   │   └── filter_providers.dart
+│   └── datasources/
+│   │   └── datasources/
+│   │   │       └── camp_site_remote_datasource.dart
+│   └── models/
+│       └── camp_site_model.dart
 │   └── repositories/
-│       └── camp_site_repository.dart
+│       └── camp_site_repository_impl.dart
 ├── domain/
 │   ├── entities/
 │   │   └── camp_site.dart
-│   └── use_cases/
-│       └── filter_camp_sites.dart
+│   ├── repositories/
+│   │   └── camp_site_repository.dart
+│   └── usecases/
+│       └── get_camp_sites.dart
 ├── presentation/
+│   ├── providers/
+│   │   ├── camp_site_provider.dart
+│   │   └── filter_providers.dart
 │   ├── views/
+│   │   ├── widgets/
+│   │      ├── camp_site_card.dart
+│   │      ├── feature_icon.dart
+│   │      ├── filters_row.dart
+│   │      ├── location_filter_dialog.dart
+│   │      ├── languages_filter_dialog.dart
+│   │      ├── price_level_filter_dialog.dart
+│   │      ├── suitable_filter_dialog.dart
+│   │      └── view_toggle.dart
+│   │   └── detail_view.dart
 │   │   └── home_view.dart
-│   ├── widgets/
-│   │   ├── camp_site_card.dart
-│   │   ├── feature_icon.dart
-│   │   ├── filters_row.dart
-│   │   ├── location_filter_dialog.dart
-│   │   ├── languages_filter_dialog.dart
-│   │   ├── price_level_filter_dialog.dart
-│   │   ├── suitable_filter_dialog.dart
-│   │   └── view_toggle.dart
-│   └── models/
-│       └── filter_state.dart
+│   │   └── main_view.dart
+│   │   └── map_view.dart
 └── main.dart
 
 test/
