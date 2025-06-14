@@ -22,7 +22,7 @@ class DetailView extends StatelessWidget {
       body: Column(
         children: [
           // Image at the top
-          Container(
+          SizedBox(
             height: imageHeight,
             width: double.infinity,
             child: Hero(
@@ -33,7 +33,7 @@ class DetailView extends StatelessWidget {
                     campSite.photo,
                     width: double.infinity,
                     height: imageHeight,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     errorBuilder: (context, error, stackTrace) => Container(
                       color: Colors.grey[200],
                       child: const Icon(Icons.broken_image, size: 100, color: Colors.grey),

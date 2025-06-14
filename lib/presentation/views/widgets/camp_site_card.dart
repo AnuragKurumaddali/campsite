@@ -144,7 +144,7 @@ class CampSiteCard extends StatelessWidget {
                 tag: campSite.id,
                 child: Image.network(
                   campSite.photo,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                   width: double.infinity,
                   height: double.infinity,
                   errorBuilder: (context, error, stackTrace) => Container(
