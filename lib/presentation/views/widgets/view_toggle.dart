@@ -10,38 +10,42 @@ class ViewToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      width: 80,
-      height: 40,
+      width: 100, // Larger for better touch area
+      height: 48,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.3),
-          width: 1,
+          color: theme.colorScheme.primary.withOpacity(0.3),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: theme.shadowColor.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Stack(
         children: [
           AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 400),
             curve: Curves.easeInOutCubic,
-            width: 40,
-            height: 40,
-            margin: EdgeInsets.only(left: isGridView ? 38 : 0),
+            width: 48,
+            height: 48,
+            margin: EdgeInsets.only(left: isGridView ? 50 : 2),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                colors: [theme.colorScheme.primary, theme.colorScheme.primaryContainer],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
                   color: theme.colorScheme.primary.withOpacity(0.3),
-                  blurRadius: 4,
+                  blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -53,12 +57,12 @@ class ViewToggle extends StatelessWidget {
               GestureDetector(
                 onTap: () => onToggle(false),
                 child: Container(
-                  width: 40,
-                  height: 40,
+                  width: 48,
+                  height: 48,
                   alignment: Alignment.center,
                   child: Icon(
                     Icons.list,
-                    size: 18,
+                    size: 22,
                     color: isGridView
                         ? theme.colorScheme.onSurfaceVariant
                         : theme.colorScheme.onPrimaryContainer,
@@ -68,12 +72,12 @@ class ViewToggle extends StatelessWidget {
               GestureDetector(
                 onTap: () => onToggle(true),
                 child: Container(
-                  width: 38,
-                  height: 40,
+                  width: 48,
+                  height: 48,
                   alignment: Alignment.center,
                   child: Icon(
                     Icons.grid_view,
-                    size: 18,
+                    size: 22,
                     color: isGridView
                         ? theme.colorScheme.onPrimaryContainer
                         : theme.colorScheme.onSurfaceVariant,

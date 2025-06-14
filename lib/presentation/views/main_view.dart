@@ -10,6 +10,7 @@ class MainView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tabIndex = ref.watch(tabIndexProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       body: IndexedStack(
@@ -19,24 +20,44 @@ class MainView extends ConsumerWidget {
           MapView(),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: tabIndex,
-        onDestinationSelected: (index) {
-          ref.read(tabIndexProvider.notifier).state = index;
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.list_alt),
-            label: 'List',
+      bottomNavigationBar: Theme(
+        data: theme.copyWith(
+          navigationBarTheme: NavigationBarThemeData(
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+              return theme.textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w600,
+                color: states.contains(WidgetState.selected)
+                    ? theme.colorScheme.onPrimary
+                    : theme.colorScheme.onPrimary.withOpacity(0.7),
+              );
+            }),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.map_outlined),
-            label: 'Map',
-          ),
-        ],
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        animationDuration: const Duration(milliseconds: 300),
-        surfaceTintColor: Theme.of(context).colorScheme.surface,
+        ),
+        child: NavigationBar(
+          selectedIndex: tabIndex,
+          onDestinationSelected: (index) {
+            ref.read(tabIndexProvider.notifier).state = index;
+          },
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.list_alt, size: 28),
+              selectedIcon: Icon(Icons.list_alt, size: 28, color: theme.colorScheme.onPrimary),
+              label: 'List',
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.map_outlined, size: 28),
+              selectedIcon: Icon(Icons.map_outlined, size: 28, color: theme.colorScheme.onPrimary),
+              label: 'Map',
+            ),
+          ],
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          animationDuration: const Duration(milliseconds: 400),
+          backgroundColor: theme.colorScheme.primary,
+          indicatorColor: theme.colorScheme.primaryContainer,
+          surfaceTintColor: Colors.transparent,
+          elevation: 8,
+          height: 70,
+        ),
       ),
     );
   }

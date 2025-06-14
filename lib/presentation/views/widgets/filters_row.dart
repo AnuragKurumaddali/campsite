@@ -58,15 +58,15 @@ class _FiltersRowState extends State<FiltersRow> {
           bottom: 0,
           child: AnimatedOpacity(
             opacity: _showScrollHint ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 800), // Smoother fade
             child: IgnorePointer(
               child: Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.only(right: 8),
                 child: Icon(
                   Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.grey.withOpacity(0.6),
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
                 ),
               ),
             ),
@@ -176,7 +176,7 @@ class _FiltersRowState extends State<FiltersRow> {
             ? () => ref.read(priceLevelsProvider.notifier).state = []
             : null,
       ),
-    ].map((chip) => Padding(padding: const EdgeInsets.only(right: 10), child: chip)).toList();
+    ].map((chip) => Padding(padding: const EdgeInsets.only(right: 12), child: chip)).toList();
   }
 
   Widget _buildCustomChip(
@@ -193,26 +193,31 @@ class _FiltersRowState extends State<FiltersRow> {
         : theme.colorScheme.onSurface;
 
     return InkWell(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(30),
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        duration: const Duration(milliseconds: 300),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: selected
-              ? theme.colorScheme.primaryContainer
-              : theme.colorScheme.surfaceContainerHighest.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(24),
+          gradient: selected
+              ? LinearGradient(
+            colors: [theme.colorScheme.primary, theme.colorScheme.primaryContainer],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          )
+              : null,
+          color: selected ? null : theme.colorScheme.onSurfaceVariant,
+          borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: selected ? theme.colorScheme.primary : Colors.transparent,
-            width: selected ? 1.4 : 0.5,
+            color: selected ? theme.colorScheme.primary : Colors.grey.shade300,
+            width: selected ? 2 : 1,
           ),
           boxShadow: selected
               ? [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
+              color: theme.colorScheme.primary.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ]
               : [],
@@ -220,20 +225,21 @@ class _FiltersRowState extends State<FiltersRow> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 20, color: textColor),
-            const SizedBox(width: 8),
+            Icon(icon, size: 22, color: textColor),
+            const SizedBox(width: 10),
             Text(
               label,
               style: TextStyle(
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: textColor,
               ),
             ),
             if (onDelete != null) ...[
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               GestureDetector(
                 onTap: onDelete,
-                child: Icon(Icons.clear, size: 18, color: textColor),
+                child: Icon(Icons.clear, size: 20, color: textColor),
               ),
             ],
           ],

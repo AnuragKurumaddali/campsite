@@ -10,15 +10,23 @@ class LanguagesFilterDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedLanguages = ref.watch(hostLanguagesProvider);
     final availableLanguages = ['en', 'pl', 'de', 'fr', 'es', 'it'];
+    final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Filter by Host Languages'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text(
+        'Filter by Host Languages',
+        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: availableLanguages.map((lang) {
             return CheckboxListTile(
-              title: Text(lang.toUpperCase()),
+              title: Text(
+                lang.toUpperCase(),
+                style: theme.textTheme.bodyLarge,
+              ),
               value: selectedLanguages.contains(lang),
               onChanged: (value) {
                 final updated = List<String>.from(selectedLanguages);
@@ -36,6 +44,18 @@ class LanguagesFilterDialog extends ConsumerWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          child: Text(
+            'Cancel',
+            style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurface),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
           child: const Text('Done'),
         ),
       ],

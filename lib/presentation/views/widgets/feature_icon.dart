@@ -15,14 +15,18 @@ class FeatureIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(6), // Slightly larger padding
       decoration: BoxDecoration(
-        color: isActive ? activeColor.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+        color: isActive ? activeColor.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
         shape: BoxShape.circle,
+        border: Border.all(
+          color: isActive ? activeColor : Colors.grey,
+          width: isActive ? 1.5 : 1,
+        ),
       ),
       child: Icon(
         icon,
-        size: 14,
+        size: 18, // Larger icon size
         color: isActive ? activeColor : Colors.grey,
       ),
     );

@@ -34,43 +34,78 @@ class _LocationFilterDialogState extends ConsumerState<LocationFilterDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return AlertDialog(
-      title: const Text('Filter by Location'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Text(
+        'Filter by Location',
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: theme.colorScheme.onSurface,
+        ),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _latController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Latitude',
               hintText: 'e.g., 40.7128',
+              labelStyle: theme.textTheme.bodyLarge,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
+          const SizedBox(height: 12),
           TextField(
             controller: _longController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Longitude',
               hintText: 'e.g., -74.0060',
+              labelStyle: theme.textTheme.bodyLarge,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
+          const SizedBox(height: 12),
           TextField(
             controller: _radiusController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Radius (km)',
               hintText: 'e.g., 10',
+              labelStyle: theme.textTheme.bodyLarge,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
         ],
       ),
       actions: [
-        TextButton(
+        OutlinedButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            side: BorderSide(color: theme.colorScheme.primary),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+          child: Text(
+            'Cancel',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
         ),
-        TextButton(
+        ElevatedButton(
           onPressed: () {
             final lat = double.tryParse(_latController.text);
             final long = double.tryParse(_longController.text);
@@ -91,7 +126,16 @@ class _LocationFilterDialogState extends ConsumerState<LocationFilterDialog> {
               Navigator.pop(context);
             }
           },
-          child: const Text('Apply'),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+          child: Text(
+            'Apply',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onPrimary,
+            ),
+          ),
         ),
       ],
     );
