@@ -19,6 +19,7 @@ class MapView extends ConsumerStatefulWidget {
 class _MapViewState extends ConsumerState<MapView> {
   final MapController _mapController = MapController();
   bool mapReady = false;
+  bool hasMovedToFocused = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +27,6 @@ class _MapViewState extends ConsumerState<MapView> {
     final theme = Theme.of(context);
 
     final focusedCoordinate = ref.watch(focusedCoordinateProvider);
-
-    if (focusedCoordinate != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mapController.move(focusedCoordinate, 15); // zoom level 15
-        ref.read(focusedCoordinateProvider.notifier).state = null; // Reset after move
-      });
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -47,6 +41,10 @@ class _MapViewState extends ConsumerState<MapView> {
         backgroundColor: theme.colorScheme.primary,
         elevation: 0,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -112,11 +110,21 @@ class _MapViewState extends ConsumerState<MapView> {
             )
                 : fallbackCenter;
 
+            if (mapReady && focusedCoordinate != null && !hasMovedToFocused) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _mapController.move(focusedCoordinate, 15);
+                setState(() {
+                  hasMovedToFocused = true;
+                });
+                ref.read(focusedCoordinateProvider.notifier).state = null;
+              });
+            }
+
             return FlutterMap(
               mapController: _mapController,
               options: MapOptions(
-                initialCenter: center,
-                initialZoom: 3,
+                initialCenter: focusedCoordinate ?? center,
+                initialZoom: focusedCoordinate != null ? 15 : 3,
                 minZoom: 2,
                 maxZoom: 18,
                 interactionOptions: const InteractionOptions(
@@ -133,7 +141,7 @@ class _MapViewState extends ConsumerState<MapView> {
                   ),
                 ),
                 onMapReady: () {
-                  if (!mapReady && markers.isNotEmpty) {
+                  if (!mapReady && markers.isNotEmpty && focusedCoordinate == null) {
                     final bounds = LatLngBounds.fromPoints(
                       markers.map((m) => m.point).toList(),
                     );
@@ -144,10 +152,10 @@ class _MapViewState extends ConsumerState<MapView> {
                         maxZoom: 15,
                       ),
                     );
-                    setState(() {
-                      mapReady = true;
-                    });
                   }
+                  setState(() {
+                    mapReady = true;
+                  });
                 },
               ),
               children: [

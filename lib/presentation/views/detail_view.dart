@@ -1,5 +1,6 @@
 import 'package:campsite/core/utils/location_utils.dart';
 import 'package:campsite/presentation/providers/filter_providers.dart';
+import 'package:campsite/presentation/views/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -175,10 +176,12 @@ class DetailView extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           final refContainer = ProviderScope.containerOf(context);
-          refContainer.read(tabIndexProvider.notifier).state = 1;
           refContainer.read(focusedCoordinateProvider.notifier).state =
               LatLng(normalizedLat, normalizedLong);
-          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const MapView()),
+          );
         },
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
