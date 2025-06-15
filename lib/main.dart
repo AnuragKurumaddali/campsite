@@ -1,6 +1,6 @@
+import 'package:campsite/presentation/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'presentation/views/main_view.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       themeMode: ThemeMode.system,
-      home: const MainView(),
+      home: const HomeView(),
     );
   }
 }

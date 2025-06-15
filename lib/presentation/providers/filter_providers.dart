@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
-final tabIndexProvider = StateProvider<int>((ref) => 0);
 final searchTextProvider = StateProvider<String>((ref) => '');
 final closeToWaterProvider = StateProvider<bool>((ref) => false);
 final campFireAllowedProvider = StateProvider<bool>((ref) => false);

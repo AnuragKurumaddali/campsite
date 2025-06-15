@@ -226,7 +226,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: FiltersRow(ref: ref),
                   ),
-                  const SizedBox(height: 12),
                 ],
               ),
               secondChild: Padding(

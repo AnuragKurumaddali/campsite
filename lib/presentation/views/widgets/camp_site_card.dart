@@ -18,7 +18,7 @@ class CampSiteCard extends StatelessWidget {
     final normalizedLong = LocationUtils.normalizeLongitude(campSite.geoLocation.long);
 
     return Card(
-      margin: isGridView ? const EdgeInsets.only(bottom: 16) : const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      margin: isGridView ? const EdgeInsets.only(bottom: 8) : const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       clipBehavior: Clip.hardEdge,
       elevation: isGridView ? 8 : 4,
