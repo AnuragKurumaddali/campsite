@@ -10,7 +10,7 @@ class ViewToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      width: 100, // Larger for better touch area
+      width: 100,
       height: 48,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -63,9 +63,7 @@ class ViewToggle extends StatelessWidget {
                   child: Icon(
                     Icons.list,
                     size: 22,
-                    color: isGridView
-                        ? theme.colorScheme.onSurfaceVariant
-                        : theme.colorScheme.onPrimaryContainer,
+                    color: theme.colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),
@@ -78,9 +76,7 @@ class ViewToggle extends StatelessWidget {
                   child: Icon(
                     Icons.grid_view,
                     size: 22,
-                    color: isGridView
-                        ? theme.colorScheme.onPrimaryContainer
-                        : theme.colorScheme.onSurfaceVariant,
+                    color: theme.colorScheme.onPrimaryContainer
                   ),
                 ),
               ),
