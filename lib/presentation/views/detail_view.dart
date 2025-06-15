@@ -15,40 +15,83 @@ class DetailView extends StatelessWidget {
     final theme = Theme.of(context);
     final normalizedLat = LocationUtils.normalizeLatitude(campSite.geoLocation.lat);
     final normalizedLong = LocationUtils.normalizeLongitude(campSite.geoLocation.long);
-    final screenHeight = MediaQuery.of(context).size.height;
-    final imageHeight = screenHeight * 0.4; // 40% of screen height for top image
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final imageHeight = isLandscape ? screenWidth * 0.4 : screenWidth * 0.6;
 
     return Scaffold(
-      body: Column(
-        children: [
-          // Image at the top
-          SizedBox(
-            height: imageHeight,
-            width: double.infinity,
-            child: Hero(
-              tag: campSite.id,
-              child: Stack(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: imageHeight,
+            floating: false,
+            pinned: true,
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.network(
-                    campSite.photo,
-                    width: double.infinity,
-                    height: imageHeight,
-                    fit: BoxFit.fill,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.colorScheme.onSurface,
+                      size: 20,
                     ),
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                              : null,
+                    onPressed: () => Navigator.pop(context),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  const SizedBox(width: 6),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: screenWidth * 0.4),
+                    child: Text(
+                      campSite.label,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            leadingWidth: screenWidth * 0.6,
+            clipBehavior: Clip.hardEdge,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Hero(
+                    tag: campSite.id,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Image.network(
+                          campSite.photo,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                          ),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -56,40 +99,9 @@ class DetailView extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withOpacity(0.3),
+                          theme.colorScheme.surface.withOpacity(0.4),
                           Colors.transparent,
                         ],
-                      ),
-                    ),
-                  ),
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min, // Shrink-wrap the Row
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: MediaQuery.of(context).size.width * 0.7, // Limit text width
-                              ),
-                              child: Text(
-                                campSite.label,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ),
@@ -97,11 +109,19 @@ class DetailView extends StatelessWidget {
               ),
             ),
           ),
-          // Card at the bottom with scrollable content
-          Expanded(
-            child: SingleChildScrollView(
-              child: Card(
+          SliverList(
+            delegate: SliverChildListDelegate([
+              Card(
+                margin: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 16),
                 elevation: 3,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -111,13 +131,6 @@ class DetailView extends StatelessWidget {
                         '€${campSite.pricePerNight.toStringAsFixed(2)}/night',
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.5),
-                              offset: const Offset(0, 2),
-                              blurRadius: 4,
-                            ),
-                          ],
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -155,18 +168,16 @@ class DetailView extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+            ]),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           final refContainer = ProviderScope.containerOf(context);
-
-          refContainer.read(tabIndexProvider.notifier).state = 1; // Switch to Map
+          refContainer.read(tabIndexProvider.notifier).state = 1;
           refContainer.read(focusedCoordinateProvider.notifier).state =
               LatLng(normalizedLat, normalizedLong);
-
           Navigator.pop(context);
         },
         backgroundColor: theme.colorScheme.primary,
@@ -197,7 +208,7 @@ class _InfoCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Colors.white.withOpacity(0.7), // Semi-transparent inner cards
+      color: Colors.white.withOpacity(0.7),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
