@@ -20,6 +20,7 @@ class _MapViewState extends ConsumerState<MapView> {
   final MapController _mapController = MapController();
   bool mapReady = false;
   bool hasMovedToFocused = false;
+  LatLng? _highlightedCoordinate;
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +63,13 @@ class _MapViewState extends ConsumerState<MapView> {
             final markers = campSites.map((campSite) {
               final normalizedLat = LocationUtils.normalizeLatitude(campSite.geoLocation.lat);
               final normalizedLong = LocationUtils.normalizeLongitude(campSite.geoLocation.long);
+              final isFocused = _highlightedCoordinate != null &&
+                  (normalizedLat - _highlightedCoordinate!.latitude).abs() < 0.0001 &&
+                  (normalizedLong - _highlightedCoordinate!.longitude).abs() < 0.0001;
+
               return Marker(
-                width: 48,
-                height: 48,
+                width: isFocused ? 60 : 48,
+                height: isFocused ? 60 : 48,
                 point: LatLng(normalizedLat, normalizedLong),
                 child: GestureDetector(
                   onTap: () async {
@@ -88,13 +93,16 @@ class _MapViewState extends ConsumerState<MapView> {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: theme.colorScheme.primary,
-                      border: Border.all(color: Colors.white, width: 2),
+                      color: isFocused ? Colors.red : theme.colorScheme.primary,
+                      border: Border.all(
+                        color: isFocused ? Colors.yellow : Colors.white,
+                        width: isFocused ? 3 : 2,
+                      ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.location_pin,
                       color: Colors.white,
-                      size: 32,
+                      size: isFocused ? 40 : 32,
                       semanticLabel: 'Campsite location',
                     ),
                   ),
@@ -116,8 +124,8 @@ class _MapViewState extends ConsumerState<MapView> {
                 _mapController.move(focusedCoordinate, 15);
                 setState(() {
                   hasMovedToFocused = true;
+                  _highlightedCoordinate = focusedCoordinate;
                 });
-                ref.read(focusedCoordinateProvider.notifier).state = null;
               });
             }
 
