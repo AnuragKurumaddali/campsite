@@ -25,6 +25,7 @@ class _MapViewState extends ConsumerState<MapView> {
   Widget build(BuildContext context) {
     final campSitesAsync = ref.watch(campSitesProvider);
     final theme = Theme.of(context);
+    final scaffold = ScaffoldMessenger.of(context);
 
     final focusedCoordinate = ref.watch(focusedCoordinateProvider);
 
@@ -79,7 +80,7 @@ class _MapViewState extends ConsumerState<MapView> {
                     if (await canLaunchUrl(uri)) {
                       await launchUrl(uri, mode: LaunchMode.externalApplication);
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      scaffold.showSnackBar(
                         const SnackBar(content: Text('Could not launch Maps')),
                       );
                     }
@@ -120,81 +121,111 @@ class _MapViewState extends ConsumerState<MapView> {
               });
             }
 
-            return FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: focusedCoordinate ?? center,
-                initialZoom: focusedCoordinate != null ? 15 : 3,
-                minZoom: 2,
-                maxZoom: 18,
-                interactionOptions: const InteractionOptions(
-                  flags: InteractiveFlag.pinchZoom |
-                  InteractiveFlag.drag |
-                  InteractiveFlag.flingAnimation |
-                  InteractiveFlag.doubleTapZoom |
-                  InteractiveFlag.scrollWheelZoom,
-                ),
-                cameraConstraint: CameraConstraint.contain(
-                  bounds: LatLngBounds(
-                    const LatLng(-85.0, -180.0),
-                    const LatLng(85.0, 180.0),
-                  ),
-                ),
-                onMapReady: () {
-                  if (!mapReady && markers.isNotEmpty && focusedCoordinate == null) {
-                    final bounds = LatLngBounds.fromPoints(
-                      markers.map((m) => m.point).toList(),
-                    );
-                    _mapController.fitCamera(
-                      CameraFit.bounds(
-                        bounds: bounds,
-                        padding: const EdgeInsets.all(50),
-                        maxZoom: 15,
-                      ),
-                    );
-                  }
-                  setState(() {
-                    mapReady = true;
-                  });
-                },
-              ),
+            return Stack(
               children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.vajra.camp',
-                  retinaMode: true,
-                ),
-                if (mapReady && markers.isNotEmpty)
-                  MarkerClusterLayerWidget(
-                    options: MarkerClusterLayerOptions(
-                      markers: markers,
-                      maxClusterRadius: 50,
-                      size: const Size(48, 48),
-                      alignment: Alignment.center,
-                      animationsOptions: const AnimationsOptions(
-                        zoom: Duration(milliseconds: 400),
-                        spiderfy: Duration(milliseconds: 400),
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: focusedCoordinate ?? center,
+                    initialZoom: focusedCoordinate != null ? 15 : 3,
+                    minZoom: 2,
+                    maxZoom: 18,
+                    interactionOptions: const InteractionOptions(
+                      flags: InteractiveFlag.pinchZoom |
+                      InteractiveFlag.drag |
+                      InteractiveFlag.flingAnimation |
+                      InteractiveFlag.doubleTapZoom |
+                      InteractiveFlag.scrollWheelZoom,
+                    ),
+                    cameraConstraint: CameraConstraint.contain(
+                      bounds: LatLngBounds(
+                        const LatLng(-85.0, -180.0),
+                        const LatLng(85.0, 180.0),
                       ),
-                      builder: (context, clusterMarkers) => Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [theme.colorScheme.primary, theme.colorScheme.primaryContainer],
+                    ),
+                    onMapReady: () {
+                      if (!mapReady && markers.isNotEmpty && focusedCoordinate == null) {
+                        final bounds = LatLngBounds.fromPoints(
+                          markers.map((m) => m.point).toList(),
+                        );
+                        _mapController.fitCamera(
+                          CameraFit.bounds(
+                            bounds: bounds,
+                            padding: const EdgeInsets.all(50),
+                            maxZoom: 15,
                           ),
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: Center(
-                          child: Text(
-                            clusterMarkers.length.toString(),
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                        );
+                      }
+                      setState(() {
+                        mapReady = true;
+                      });
+                    },
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.vajra.camp',
+                      retinaMode: true,
+                    ),
+                    if (mapReady && markers.isNotEmpty)
+                      MarkerClusterLayerWidget(
+                        options: MarkerClusterLayerOptions(
+                          markers: markers,
+                          maxClusterRadius: 50,
+                          size: const Size(48, 48),
+                          alignment: Alignment.center,
+                          animationsOptions: const AnimationsOptions(
+                            zoom: Duration(milliseconds: 400),
+                            spiderfy: Duration(milliseconds: 400),
+                          ),
+                          builder: (context, clusterMarkers) => Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [theme.colorScheme.primary, theme.colorScheme.primaryContainer],
+                              ),
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: Center(
+                              child: Text(
+                                clusterMarkers.length.toString(),
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                  ],
+                ),
+
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: Column(
+                    children: [
+                      FloatingActionButton(
+                        heroTag: "zoom_in",
+                        mini: true,
+                        onPressed: () {
+                          _mapController.move(_mapController.camera.center, _mapController.camera.zoom + 1);
+                        },
+                        child: const Icon(Icons.add),
+                      ),
+                      const SizedBox(height: 8),
+                      FloatingActionButton(
+                        heroTag: "zoom_out",
+                        mini: true,
+                        onPressed: () {
+                          _mapController.move(_mapController.camera.center, _mapController.camera.zoom - 1);
+                        },
+                        child: const Icon(Icons.remove),
+                      ),
+                    ],
                   ),
+                ),
               ],
             );
           },
